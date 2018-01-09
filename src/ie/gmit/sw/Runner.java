@@ -5,6 +5,6 @@ public class Runner {
 		// Intstance of the user interaface
 		UI userInterface = new UI();
 		
-		// userInterface.run();
+		 userInterface.mainMenu();
 	}
 }
