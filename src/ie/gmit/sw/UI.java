@@ -40,7 +40,9 @@ public class UI {
 		System.out.println("Enter file name / URL 2: ");
 		location2 = sc.next();
 		
-		
+		Parser.parseLocation(location1);
+		Parser.parseLocation(location2);
+
 	}
 }
 
