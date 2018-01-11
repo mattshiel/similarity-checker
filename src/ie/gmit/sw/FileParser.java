@@ -14,9 +14,10 @@ public class FileParser implements Runnable{
 	private File file;
 	private BufferedReader br;
 	private String line = "";
+	private Shingleator shingleMaker = new Shingleizer();
 	// ArrayList of strings that contain the words from the text file
 	private List<String> words = new ArrayList<String>();
-	private Shingleator shingleMaker = new Shingleizer();
+	private List<String> shingles = new ArrayList<String>();
 	
 	public FileParser(String location) {
 		this.file = new File(location);
@@ -32,10 +33,12 @@ public class FileParser implements Runnable{
 				System.out.println("File " + file.getName() +  " read successfully!");
 				
 				while((line = br.readLine()) != null) {
-					String[] split = line.split(" ");
+					// This regex allows retention of special unicode characters but removes all other punctuation
+					// Adapted from https://stackoverflow.com/questions/18830813/how-can-i-remove-punctuation-from-input-text-in-java
+					String[] split = line.replaceAll("[^\\p{L} ]", "").toLowerCase().split("\\s+");
 					// Add split words to the array list
 					for (int i = 0; i < split.length; i++) {
-						words.add(split[i]);
+						words.add(split[i].toLowerCase());
 					}
 				}
 			} catch (IOException e) {
@@ -46,8 +49,15 @@ public class FileParser implements Runnable{
 			System.out.println("Error file " + file.getName() + " not found, please try again.");
 		}
 		
-		// Create shingles of fixed size 2 for every all words
-		shingleMaker.shingleize(words);
+		// Create shingles of fixed size 2 for every words
+		shingles = shingleMaker.shingleize(words);
+		
+		// Hashes the shingles and adds to the blocking queue
+		
+		
+		for(String s : shingles) {
+	          System.out.println(s);
+		}
 	}
 	
 }

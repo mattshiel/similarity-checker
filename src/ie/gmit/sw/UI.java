@@ -19,6 +19,8 @@ public class UI {
 	// File Parsers for both files
 	private FileParser f1;
 	private FileParser f2;
+	// BlockingQueue
+	//BlockingQueue<Shingle> queue = new LinkedBlockingDeque<>();
 	//Scanner
 	private Scanner sc = new Scanner(System.in);
 	
