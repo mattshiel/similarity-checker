@@ -1,6 +1,8 @@
 package ie.gmit.sw;
 
 import java.util.Scanner;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class UI {
 	
@@ -8,19 +10,22 @@ public class UI {
 	 * Member Variables
 	 */
 	// Threads for both files
-	private Thread t1;
-	private Thread t2;
+	private Thread producer1;
+	private Thread producer2;
 	// Menu controls
 	private boolean keepRunning = true;
 	private int choice = -1;
 	// File Locations
 	private String location1;
 	private String location2;
+	// File IDs
+	private int docID1;
+	private int docID2;
 	// File Parsers for both files
 	private FileParser f1;
 	private FileParser f2;
 	// BlockingQueue
-	//BlockingQueue<Shingle> queue = new LinkedBlockingDeque<>();
+	BlockingQueue<Shingle> queue = new LinkedBlockingQueue<Shingle>(10000);
 	//Scanner
 	private Scanner sc = new Scanner(System.in);
 	
@@ -62,15 +67,21 @@ public class UI {
 		System.out.println("Enter file name / URL 2: ");
 		this.location2 = sc.next();
 		
-		f1 = new FileParser(location1);
-		f2 = new FileParser(location2);
+		docID1 = location1.hashCode();
+		docID2 = location2.hashCode();
+		
+		f1 = new FileParser(location1, docID1, queue);
+		f2 = new FileParser(location2, docID2, queue);
 	}
 	
 	private void startThreads() {
-		t1 = new Thread(f1);
-		t1.start();
-		t2 = new Thread(f2);
-		t2.start();		
+		// Producer Threads
+		producer1 = new Thread(f1);
+		producer1.start();
+		producer2 = new Thread(f2);
+		producer2.start();		
+		
+		// Consumer Threads
 	}
 }
 

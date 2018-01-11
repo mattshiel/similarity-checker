@@ -8,19 +8,43 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class FileParser implements Runnable{
 
+	/*
+	 * Member variables
+	 */
+	// FileParser parametres
 	private File file;
-	private BufferedReader br;
-	private String line = "";
-	private Shingleator shingleMaker = new Shingleizer();
-	// ArrayList of strings that contain the words from the text file
-	private List<String> words = new ArrayList<String>();
-	private List<String> shingles = new ArrayList<String>();
+	private int docID;
+	BlockingQueue<Shingle> queue = new LinkedBlockingQueue<Shingle>(10000);
 	
-	public FileParser(String location) {
+	// Buffered reader for fast file parsing
+	private BufferedReader br;
+	// Control for the while loop while parsing
+	private String line = "";
+	
+	// Array List to contain words in document
+	private List<String> words = new ArrayList<String>();
+	// Array list to contain shingles
+	private List<Shingle> shingles = new ArrayList<Shingle>();
+	
+	// Shingleator to convert words to shingles
+	private Shingleator shingleizer;	
+	
+	/*
+	 *  Default Constructor
+	 */
+	public FileParser() {
+		
+	}
+	
+	public FileParser(String location, int docID, BlockingQueue<Shingle> queue) {
 		this.file = new File(location);
+		this.docID = docID;
+		this.queue = queue;
 	}
 	
 	@Override
@@ -49,15 +73,15 @@ public class FileParser implements Runnable{
 			System.out.println("Error file " + file.getName() + " not found, please try again.");
 		}
 		
-		// Create shingles of fixed size 2 for every words
-		shingles = shingleMaker.shingleize(words);
-		
-		// Hashes the shingles and adds to the blocking queue
-		
-		
-		for(String s : shingles) {
-	          System.out.println(s);
+		// Instantiate shinglizer as a FileShingelizer
+		shingleizer = new FileShingleizer(words, docID);
+		// Shingleize file and store shingles in list
+		shingles = shingleizer.shingleize();
+				
+		// Add each hashed shingle to the blocking queue
+		for(Shingle shingle : shingles) {
+	          queue.add(shingle);
+	          System.out.println(shingle);
 		}
 	}
-	
 }
