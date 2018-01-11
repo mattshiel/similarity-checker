@@ -9,21 +9,23 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileParser implements Parserator {
+public class FileParser implements Runnable{
 
-	@SuppressWarnings("unused")
 	private File file;
 	private BufferedReader br;
 	private String line = "";
 	// ArrayList of strings that contain the words from the text file
 	private List<String> words = new ArrayList<String>();
+	private Shingleator shingleMaker = new Shingleizer();
+	
+	public FileParser(String location) {
+		this.file = new File(location);
+	}
 	
 	@Override
-	public List<String> parse(String location) {		
-		
+	public void run() {
 		try {
-			this.file = new File(location);
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(location)));
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			
 			try {
 				// If the user enters this block the file has been read successfully
@@ -43,7 +45,9 @@ public class FileParser implements Parserator {
 			// Main menu will loop and this error will inform the user to try again
 			System.out.println("Error file " + file.getName() + " not found, please try again.");
 		}
-		return words;
+		
+		// Create shingles of fixed size 2 for every all words
+		shingleMaker.shingleize(words);
 	}
-
+	
 }
