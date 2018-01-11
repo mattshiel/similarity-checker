@@ -21,7 +21,7 @@ public class Consumer implements Runnable {
 	private Map<Integer, List<Integer>> map = new ConcurrentHashMap<Integer, List<Integer>>();
 	
 	//int N_CPUS = Runtime.getRuntime().availableProcessors();
-	private ExecutorService pool = Executors.newFixedThreadPool(10);
+	private ExecutorService pool = Executors.newFixedThreadPool(10000);
 	
 	//Default constructor
 	public Consumer() {
@@ -61,7 +61,7 @@ public class Consumer implements Runnable {
 		
 		while (docCount > 0) {
 			try {
-				//Thread.sleep(10);
+				Thread.sleep(1);
 				Shingle shingle = queue.take();
 				System.out.println("Shingle hashcode is: " + shingle.getShingleHashCode() + " DocID is: " + shingle.getDocID());
 				

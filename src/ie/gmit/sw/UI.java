@@ -80,10 +80,10 @@ public class UI {
 		producer1 = new Thread(f1);
 		producer1.start();
 		producer2 = new Thread(f2);
-		producer2.start();		
+		producer2.start();	
+		// Consumer Thread
 		consumer = new Thread(new Consumer(queue));
 		consumer.start();
-		// Consumer Threads
 	}
 }
 
