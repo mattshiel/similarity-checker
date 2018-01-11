@@ -68,8 +68,8 @@ public class UI {
 		System.out.println("Enter file name / URL 2: ");
 		this.location2 = sc.next();
 		
-		docID1 = location1.hashCode();
-		docID2 = location2.hashCode();
+		docID1 = 1;
+		docID2 = 2;
 		
 		f1 = new FileParser(location1, docID1, queue);
 		f2 = new FileParser(location2, docID2, queue);

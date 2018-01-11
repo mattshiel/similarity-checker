@@ -9,7 +9,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class FileParser implements Runnable{
 
@@ -21,7 +20,7 @@ public class FileParser implements Runnable{
 	// File ID
 	private int docID;
 	// Shared blocking queue where shingles will be stored
-	BlockingQueue<Shingle> queue = new LinkedBlockingQueue<Shingle>(10000);
+	BlockingQueue<Shingle> queue;
 	// Buffered reader for fast file parsing
 	private BufferedReader br;
 	// Control for the while loop while parsing
@@ -75,13 +74,13 @@ public class FileParser implements Runnable{
 		}
 		
 		// Instantiate shinglizer as a FileShingelizer
-		shingleizer = new FileShingleizer(words, docID);
+		shingleizer = new FileShinglizer(words, docID);
 		// Shingleize file and store shingles in list
 		shingles = shingleizer.shingleize();
 				
 		// Add each hashed shingle to the blocking queue
 		for(Shingle shingle : shingles) {
-	          queue.add(shingle);
-		}
+	         queue.add(shingle);
+		}		
 	}
 }

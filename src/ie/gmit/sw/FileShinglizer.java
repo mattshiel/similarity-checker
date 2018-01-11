@@ -3,7 +3,7 @@ package ie.gmit.sw;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileShingleizer implements Shingleator {
+public class FileShinglizer implements Shingleator {
 	// List of words to shingle
 	private List<String> words = new ArrayList<String>();
 	// List of hashed shingles
@@ -13,7 +13,7 @@ public class FileShingleizer implements Shingleator {
 	private final int SHINGLE_SIZE = 3;
 	private int docID;
 
-	public FileShingleizer(List<String> words, int docID) {
+	public FileShinglizer(List<String> words, int docID) {
 		this.words = words;
 		this.docID = docID;
 	}
