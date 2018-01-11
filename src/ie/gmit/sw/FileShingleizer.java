@@ -10,7 +10,7 @@ public class FileShingleizer implements Shingleator {
 	private List<Shingle> shingles = new ArrayList<Shingle>();
 	
 	// Shingle size
-	private final int SHINGLE_SIZE = 2;
+	private final int SHINGLE_SIZE = 3;
 	private int docID;
 
 	public FileShingleizer(List<String> words, int docID) {

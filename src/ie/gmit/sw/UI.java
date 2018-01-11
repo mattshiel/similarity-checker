@@ -12,6 +12,7 @@ public class UI {
 	// Threads for both files
 	private Thread producer1;
 	private Thread producer2;
+	private Thread consumer;
 	// Menu controls
 	private boolean keepRunning = true;
 	private int choice = -1;
@@ -80,7 +81,8 @@ public class UI {
 		producer1.start();
 		producer2 = new Thread(f2);
 		producer2.start();		
-		
+		consumer = new Thread(new Consumer(queue));
+		consumer.start();
 		// Consumer Threads
 	}
 }

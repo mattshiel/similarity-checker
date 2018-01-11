@@ -16,11 +16,12 @@ public class FileParser implements Runnable{
 	/*
 	 * Member variables
 	 */
-	// FileParser parametres
+	// File
 	private File file;
+	// File ID
 	private int docID;
+	// Shared blocking queue where shingles will be stored
 	BlockingQueue<Shingle> queue = new LinkedBlockingQueue<Shingle>(10000);
-	
 	// Buffered reader for fast file parsing
 	private BufferedReader br;
 	// Control for the while loop while parsing
@@ -81,7 +82,6 @@ public class FileParser implements Runnable{
 		// Add each hashed shingle to the blocking queue
 		for(Shingle shingle : shingles) {
 	          queue.add(shingle);
-	          System.out.println(shingle);
 		}
 	}
 }
