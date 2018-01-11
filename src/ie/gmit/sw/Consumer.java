@@ -3,6 +3,7 @@ package ie.gmit.sw;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -15,11 +16,12 @@ public class Consumer implements Runnable {
 	 * Member Variables
 	 */
 	private BlockingQueue<Shingle> queue;
-	// 
-	private int[] minhashes;
+	private Set<Integer> minhashes;
+	//private int[] minhashes;
 	private Map<Integer, List<Integer>> map = new ConcurrentHashMap<Integer, List<Integer>>();
+	
 	//int N_CPUS = Runtime.getRuntime().availableProcessors();
-	private ExecutorService pool = Executors.newFixedThreadPool(100);
+	private ExecutorService pool = Executors.newFixedThreadPool(10);
 	
 	//Default constructor
 	public Consumer() {
@@ -40,8 +42,8 @@ public class Consumer implements Runnable {
 		// Default maximum to the minimum first
 		int min = Integer.MAX_VALUE;
 		
-		for (int i = 0; i < minhashes.length; i++) {
-			int minHash = s.getShingleHashCode() ^ minhashes[i];
+		for (Integer hash : minhashes) {
+			int minHash = s.getShingleHashCode() ^ hash;
 			// If the result is smaller than max value min becomes the greatest value
 			// until the smallest possible minhash is achieved
 			if (minHash < min) {
@@ -59,16 +61,17 @@ public class Consumer implements Runnable {
 		
 		while (docCount > 0) {
 			try {
-				Thread.sleep(100);
+				//Thread.sleep(10);
 				Shingle shingle = queue.take();
 				System.out.println("Shingle hashcode is: " + shingle.getShingleHashCode() + " DocID is: " + shingle.getDocID());
 				
+				// If you reach the EOF
 				if(shingle.getShingleHashCode() != 0) {
 					pool.execute(new Runnable() {
 	
 						@Override
 						public void run() {
-							
+							// Depending on which file, calculate and add minhashes
 							if (shingle.getDocID() == 1) {
 								list1.add(computeHash(shingle));
 							} else if (shingle.getDocID() == 2) {
@@ -97,9 +100,10 @@ public class Consumer implements Runnable {
 		List<Integer> intersection = map.get(1);
 		intersection.retainAll(map.get(2));
 		
+		// New instance of Jaccard Index, and calculate
 		JaccardIndex jaccard = new JaccardIndex(intersection.size(), k1, k2);
 		float result = jaccard.calculateIndex();
-		System.out.printf("Document1 " + jaccard.getSet1Size() + " shingles" + "\n\tDocument2 " + jaccard.getSet2Size() + " shingles" + "\nComparisons  : " + jaccard.getIntersection()
+		System.out.printf("Document1 " + jaccard.getSet1Size() + " shingles" + "\nDocument2 " + jaccard.getSet2Size() + " shingles" + "\nComparisons  : " + jaccard.getIntersection()
 				+ "\nJaccard Index: %.2f",  result);
 	}
 
@@ -111,7 +115,6 @@ public class Consumer implements Runnable {
 	 * This method was adapted from
 	 * @see <a href="https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ExecutorService.html</a>
 	 *  
-	 *   
 	 */
 	void shutdownAndAwaitTermination(ExecutorService pool) {
 		pool.shutdown(); // Disable new tasks from being submitted

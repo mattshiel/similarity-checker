@@ -1,22 +1,24 @@
 package ie.gmit.sw;
 
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class MinHasher {
 
 	// Constants
-	private static final long SEED = 40;
-	private static final int K = 6;
+	//private static final long SEED = 100;
+	private static final int K = 10;
 	
 	// Member variables
-	private static int[] minhashes = new int[K];
-	
-	public static int[] hash() {
-		Random r = new Random(SEED);
+	private static Set<Integer> minhashes = new TreeSet<Integer>();
+
+	public static Set<Integer> hash() {
+		Random r = new Random();
 		// Generate K number of hashes to be added to the set
 		for (int i = 0; i < K; i++) {
 			// Each hash is the next integer in the random sequence.
-			minhashes[i] = r.nextInt();
+			minhashes.add(r.nextInt());
 		}
 		return minhashes;
 	}

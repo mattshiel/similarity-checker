@@ -1,5 +1,7 @@
 package ie.gmit.sw;
 
+// Shingle defines a shingle
+// A shingle has a hashcode value and a document ID
 public class Shingle {
 	private int shingleHashCode;
 	private int docID;
