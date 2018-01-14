@@ -20,6 +20,7 @@ public class MinHasher {
 			// Each hash is the next integer in the random sequence.
 			minhashes.add(r.nextInt());
 		}
+		// Return a set of minhashes
 		return minhashes;
 	}
 }

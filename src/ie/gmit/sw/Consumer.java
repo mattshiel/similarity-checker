@@ -15,12 +15,13 @@ public class Consumer implements Runnable {
 	/*
 	 * Member Variables
 	 */
+	// BlockingQueue of Shingles
 	private BlockingQueue<Shingle> queue;
+	// Tree set to hold minhashes
 	private Set<Integer> minhashes;
-	//private int[] minhashes;
+	// A concurrent hashmap to hold a document ID and its minhashes
 	private Map<Integer, List<Integer>> map = new ConcurrentHashMap<Integer, List<Integer>>(2, 0.75f);
-	
-	//int N_CPUS = Runtime.getRuntime().availableProcessors();
+	// Threadpool initialized to the number of hashes
 	private ExecutorService pool = Executors.newFixedThreadPool(10);
 	
 	//Default constructor
@@ -55,18 +56,25 @@ public class Consumer implements Runnable {
 	
 	@Override
 	public void run() {
+		// ArrayLists for holding each documents minhashes
 		List<Integer> list1 = new ArrayList<>();
 		List<Integer> list2 = new ArrayList<>();
+		
+		// while loop control variable
 		int docCount = 2;
+		
+		System.out.println("Calculating similarity...");
 		
 		while (docCount != 0) {
 			try {
+				// Take a shingle off the end of the queue
 				Shingle shingle = queue.take();
 				
-				// If you reach the EOF
+				// If you reach the EOF/Poison shingle
 				if (shingle instanceof Poison) {
 					docCount--;
 				} else {
+					// Create a new worker thread
 					pool.execute(new Runnable() {
 	
 						@Override
@@ -84,6 +92,7 @@ public class Consumer implements Runnable {
 				e.printStackTrace();
 			}
 		}
+		// Shutdown the threadpool safely
 		shutdownPool();
 		
 		// Store the size of the lists for Jaccard calculation
@@ -98,9 +107,11 @@ public class Consumer implements Runnable {
 		List<Integer> intersection = map.get(1);
 		intersection.retainAll(map.get(2));
 		
-		// New instance of Jaccard Index, and calculate
+		// New instance of Jaccard Index
 		JaccardIndex jaccard = new JaccardIndex(intersection.size(), k1, k2);
+		// Calculate Jaccard
 		String result = jaccard.calculateIndex();
+		// Output no. of comparisons and similarity percentage 
 		System.out.println("\nComparisons Made: " + jaccard.getIntersection() + "\n" + result);
 	}
 

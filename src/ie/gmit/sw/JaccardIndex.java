@@ -1,6 +1,9 @@
 package ie.gmit.sw;
 
 public class JaccardIndex {
+	/*
+	 *  Member Variables
+	 */
 	private final int intersection;
 	private final int set1Size;
 	private final int set2Size;
@@ -12,12 +15,19 @@ public class JaccardIndex {
 		this.set2Size = itemBSize;
 	}
 
+	/*
+	 *  Calculate the Jaccard Index
+	 */
 	public String calculateIndex() {
+		// Calculate the index
 		jaccard = (float) intersection / (((float) set1Size + (float) set2Size) - (float) intersection);
+		// Convert result to a string and to two decimal places
 		String jaccardPercentage = String.format("%.2f", jaccard * 100);
-		return "Document similarity:" + jaccardPercentage + "%"; 
+		// Output result
+		return "Document Similarity:" + jaccardPercentage + "%\n"; 
 	}
 
+	// Getters and Setters
 	public int getIntersection() {
 		return intersection;
 	}

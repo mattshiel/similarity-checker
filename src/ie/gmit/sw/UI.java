@@ -63,14 +63,20 @@ public class UI {
 	private void getFileLocations() {
 		System.out.println("**** Document Comparison Service ****");
 		
+		// Retrieve file locations
 		System.out.println("Enter file name / URL 1: ");
 		this.location1 = sc.next();
 		System.out.println("Enter file name / URL 2: ");
 		this.location2 = sc.next();
 		
+		System.out.println();
+		
+		// First file ID
 		docID1 = 1;
+		// Second file ID
 		docID2 = 2;
 		
+		// Initialize file parsers
 		f1 = new FileParser(location1, docID1, queue);
 		f2 = new FileParser(location2, docID2, queue);
 	}
@@ -81,9 +87,17 @@ public class UI {
 		producer1.start();
 		producer2 = new Thread(f2);
 		producer2.start();	
+		
 		// Consumer Thread
 		consumer = new Thread(new Consumer(queue));
 		consumer.start();
+		try {
+			// Wait for similarity output before returning the main menu
+			consumer.join(); 
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
 
