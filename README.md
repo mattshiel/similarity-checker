@@ -1,5 +1,4 @@
 # similarity-checker
-<<<<<<< HEAD
 A Java API that can rapidly compare two large text files by computing their Jaccard Index.
 
 https://github.com/mattshiel/similarity-checker
@@ -33,8 +32,3 @@ The use of interfaces can be seen with Shingleator. This cleary provides the beh
 
 For future extension of the project I would include an abstract class or interface "Parserator" to outline different types of parsers eg. FileParser, URLParser, StringParser and another interace, possibly Hashator, to handle different types of hashing eg. MinHashing, HashCodeHashing 
 I would also like to improve the Consumer class, by having a WorkerThread class where the behaviour can be contained. This is neater than declaring runnable threads from with the Consumer run() method.
-
-Issues:
-Mainly down to inexperience working with threads and the Producer-Consumer model, the current iteration of this API can process large text files (War And Peace), shinglize and hash them extremely quickly but is only able to produce an accurate Jaccard Index of smaller text files. This seems to be due to synchrnoization issues and the blocking-queue becoming full. I plan to go back and fix these problems, possibly redesigning the Consumer class and adding a Poison class, that would inject a variable into the end of each text file, allowing EOF handling.
-
->>>>>>> branch 'master' of https://github.com/mattshiel/similarity-checker.git
