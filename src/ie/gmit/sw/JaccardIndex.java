@@ -12,9 +12,10 @@ public class JaccardIndex {
 		this.set2Size = itemBSize;
 	}
 
-	public float calculateIndex() {
+	public String calculateIndex() {
 		jaccard = (float) intersection / (((float) set1Size + (float) set2Size) - (float) intersection);
-		return jaccard;
+		String jaccardPercentage = String.format("%.2f", jaccard * 100);
+		return "Document similarity:" + jaccardPercentage + "%"; 
 	}
 
 	public int getIntersection() {

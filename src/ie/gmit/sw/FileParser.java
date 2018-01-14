@@ -81,6 +81,24 @@ public class FileParser implements Runnable{
 		// Add each hashed shingle to the blocking queue
 		for(Shingle shingle : shingles) {
 	         queue.add(shingle);
-		}		
+		}	
+		
+		for (int i = 0; i <= shingles.size(); i++) {
+			if (i == shingles.size()) {
+				try {
+					queue.put(new Poison(docID, 0));
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				try {
+					queue.put(shingles.get(i));
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }

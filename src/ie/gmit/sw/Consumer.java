@@ -18,10 +18,10 @@ public class Consumer implements Runnable {
 	private BlockingQueue<Shingle> queue;
 	private Set<Integer> minhashes;
 	//private int[] minhashes;
-	private Map<Integer, List<Integer>> map = new ConcurrentHashMap<Integer, List<Integer>>();
+	private Map<Integer, List<Integer>> map = new ConcurrentHashMap<Integer, List<Integer>>(2, 0.75f);
 	
 	//int N_CPUS = Runtime.getRuntime().availableProcessors();
-	private ExecutorService pool = Executors.newFixedThreadPool(10000);
+	private ExecutorService pool = Executors.newFixedThreadPool(10);
 	
 	//Default constructor
 	public Consumer() {
@@ -59,14 +59,14 @@ public class Consumer implements Runnable {
 		List<Integer> list2 = new ArrayList<>();
 		int docCount = 2;
 		
-		while (docCount > 0) {
+		while (docCount != 0) {
 			try {
-				Thread.sleep(1);
 				Shingle shingle = queue.take();
-				System.out.println("Shingle hashcode is: " + shingle.getShingleHashCode() + " DocID is: " + shingle.getDocID());
 				
 				// If you reach the EOF
-				if(shingle.getShingleHashCode() != 0) {
+				if (shingle instanceof Poison) {
+					docCount--;
+				} else {
 					pool.execute(new Runnable() {
 	
 						@Override
@@ -79,15 +79,13 @@ public class Consumer implements Runnable {
 							}
 						}	
 					});
-				} else {
-					docCount --;
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		shutdownAndAwaitTermination(pool);
-
+		shutdownPool();
+		
 		// Store the size of the lists for Jaccard calculation
 		int k1 = list1.size();
 		int k2 = list2.size();
@@ -102,35 +100,18 @@ public class Consumer implements Runnable {
 		
 		// New instance of Jaccard Index, and calculate
 		JaccardIndex jaccard = new JaccardIndex(intersection.size(), k1, k2);
-		float result = jaccard.calculateIndex();
-		System.out.printf("Document1 " + jaccard.getSet1Size() + " shingles" + "\nDocument2 " + jaccard.getSet2Size() + " shingles" + "\nComparisons  : " + jaccard.getIntersection()
-				+ "\nJaccard Index: %.2f",  result);
+		String result = jaccard.calculateIndex();
+		System.out.println("\nComparisons Made: " + jaccard.getIntersection() + "\n" + result);
 	}
 
-	/**
-	 * Safely shut down the ExecutorService. This will ensure that there are no
-	 * new task submitted and will wait for at most 60 seconds to finish all
-	 * tasks.
-	 * 
-	 * This method was adapted from
-	 * @see <a href="https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ExecutorService.html</a>
-	 *  
-	 */
-	void shutdownAndAwaitTermination(ExecutorService pool) {
-		pool.shutdown(); // Disable new tasks from being submitted
+	void shutdownPool() {
+		pool.shutdown(); 
 		try {
-			// Wait a while for existing tasks to terminate
-			if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
-				pool.shutdownNow(); // Cancel currently executing tasks
-				// Wait a while for tasks to respond to being cancelled
-				if (!pool.awaitTermination(60, TimeUnit.SECONDS))
-					System.err.println("Pool did not terminate");
-			}
-		} catch (InterruptedException ie) {
-			// (Re-)Cancel if current thread also interrupted
-			pool.shutdownNow();
-			// Preserve interrupt status
-			Thread.currentThread().interrupt();
+			pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MINUTES);
+		} catch (InterruptedException e) {
+			System.out.println("failure shutting down threa pool");
+			e.printStackTrace();
 		}
 	}
 }
+

@@ -8,7 +8,7 @@ public class MinHasher {
 
 	// Constants
 	private static final long SEED = 50;
-	private static final int K = 500;
+	private static final int K = 10;
 	
 	// Member variables
 	private static Set<Integer> minhashes = new TreeSet<Integer>();
