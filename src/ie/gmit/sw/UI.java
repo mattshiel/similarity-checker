@@ -26,7 +26,7 @@ public class UI {
 	private FileParser f1;
 	private FileParser f2;
 	// BlockingQueue
-	BlockingQueue<Shingle> queue = new LinkedBlockingQueue<Shingle>();
+	private BlockingQueue<Shingle> queue = new LinkedBlockingQueue<Shingle>();
 	//Scanner
 	private Scanner sc = new Scanner(System.in);
 	
